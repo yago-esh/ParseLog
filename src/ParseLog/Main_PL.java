@@ -49,14 +49,16 @@ public class Main_PL {
 	private JTextField txtEsbrirFiltroAqui;
 	private String ruta;
 	private File archivo;
-	FileWriter fichero = null;
-    PrintWriter pw = null;
+	private boolean salir;
+	private FileWriter fichero = null;
+    private PrintWriter pw = null;
 	
 	public Main_PL() {
 		initialize();
 		explorador = new JFileChooser();
 		explorador.setDialogTitle("Abrir documento...");
 		explorador.setFileFilter(new FileNameExtensionFilter("Logs", "log"));
+		salir=false;
 	}
 
 	/**
@@ -123,6 +125,7 @@ public class Main_PL {
 	
 	public void readLog() throws IOException {
 		int x=0;
+		boolean escrito=false;
 		if(ruta != "null") {
 			System.out.println("Vamos por "+ x);
 			fichero = new FileWriter("C:\\Users\\sechave\\Desktop\\file.txt");
@@ -130,14 +133,25 @@ public class Main_PL {
 			FileReader fr = new FileReader (archivo);
 			BufferedReader br = new BufferedReader(fr);
 			String linea;
-			while((linea=br.readLine())!=null) {
-				x++;
-				System.out.println("Vamos por "+ x);
-				if(linea.indexOf(txtEsbrirFiltroAqui.getText()) != -1) {
-					pw.println(linea);
+			while(true) {
+				if((linea=br.readLine()) != null){
+					
+					if(linea.indexOf(txtEsbrirFiltroAqui.getText()) != -1) {
+						x++;
+						System.out.println("Vamos por "+ x);
+						System.out.println("Vamos a escribir "+ linea);
+						pw.println(linea);
+						escrito=true;
+					}
+				}
+				else {
+					if(escrito) {
+					fichero.close();
+					fichero = new FileWriter("C:\\Users\\sechave\\Desktop\\file.txt",true);
+					pw = new PrintWriter(fichero);
+					}
 				}
 			}
-			fichero.close();
 		}
 	}
 }
