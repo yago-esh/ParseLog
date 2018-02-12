@@ -10,7 +10,13 @@ import javafx.stage.FileChooser;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -41,6 +47,10 @@ public class Main_PL {
 	 */
 	private JFileChooser explorador;
 	private JTextField txtEsbrirFiltroAqui;
+	private String ruta;
+	private File archivo;
+	FileWriter fichero = null;
+    PrintWriter pw = null;
 	
 	public Main_PL() {
 		initialize();
@@ -64,8 +74,8 @@ public class Main_PL {
 				int seleccion = explorador.showDialog(null, "Abrir!");
 				switch(seleccion) {
 				case JFileChooser.APPROVE_OPTION:
-					File archivo = explorador.getSelectedFile();
-					String ruta = archivo.getPath();
+					archivo = explorador.getSelectedFile();
+					ruta = archivo.getPath();
 				 //seleccionó abrir
 				 break;
 
@@ -98,7 +108,36 @@ public class Main_PL {
 		txtEsbrirFiltroAqui.setColumns(10);
 		
 		JButton btnCrearArchivoDe = new JButton("Crear Archivo de Salida");
+		btnCrearArchivoDe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					readLog();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnCrearArchivoDe.setBounds(132, 184, 167, 25);
 		frame.getContentPane().add(btnCrearArchivoDe);
+	}
+	
+	public void readLog() throws IOException {
+		int x=0;
+		if(ruta != "null") {
+			System.out.println("Vamos por "+ x);
+			fichero = new FileWriter("C:\\Users\\sechave\\Desktop\\file.txt");
+            pw = new PrintWriter(fichero);
+			FileReader fr = new FileReader (archivo);
+			BufferedReader br = new BufferedReader(fr);
+			String linea;
+			while((linea=br.readLine())!=null) {
+				x++;
+				System.out.println("Vamos por "+ x);
+				if(linea.indexOf(txtEsbrirFiltroAqui.getText()) != -1) {
+					pw.println(linea);
+				}
+			}
+			fichero.close();
+		}
 	}
 }
