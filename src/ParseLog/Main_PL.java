@@ -46,6 +46,8 @@ public class Main_PL implements Runnable{
     private JTextField open_text;
     private JTextField save_text;
     private String file_name;
+    private Thread thread_filter;
+    private boolean start_filter;
 	
 	public Main_PL() {
 		initialize();
@@ -57,6 +59,7 @@ public class Main_PL implements Runnable{
 
 	private void initialize() {
 		file_name="new_file";
+		start_filter=false;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,22 +88,23 @@ public class Main_PL implements Runnable{
 		panel.add(txtEsbrirFiltroAqui);
 		txtEsbrirFiltroAqui.setColumns(10);
 		
-		JButton btnCrearArchivoDe = new JButton("Crear Archivo de Salida");
+		JButton btnCrearArchivoDe = new JButton("Ejecutar Filtro");
 		btnCrearArchivoDe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					btnCrearArchivoDe.setEnabled(false);
 					btnCrearArchivoDe.setText("Filtro ejecutandose...");
-					(new Thread(window)).start();
-
+					start_filter=true;
+					thread_filter = new Thread(window);
+					thread_filter.start();
 			}
 		});
-		btnCrearArchivoDe.setBounds(132, 184, 167, 25);
+		btnCrearArchivoDe.setBounds(133, 167, 167, 25);
 		frame.getContentPane().add(btnCrearArchivoDe);
 		
 		JButton btnGuardarEn = new JButton("Guardar en...");
 		btnGuardarEn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				save_text.setText(readDirectory()+file_name);
+				save_text.setText(readDirectory()+"\\"+file_name);
 			}
 		});
 		btnGuardarEn.setBounds(25, 50, 100, 25);
@@ -115,19 +119,30 @@ public class Main_PL implements Runnable{
 		save_text.setColumns(10);
 		save_text.setBounds(134, 50, 290, 25);
 		frame.getContentPane().add(save_text);
+		
+		JButton btnNewButton = new JButton("Parar Filtro");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnCrearArchivoDe.setEnabled(true);
+				btnCrearArchivoDe.setText("Ejecutar Filtro");
+				start_filter=false;
+			}
+		});
+		btnNewButton.setBounds(133, 203, 167, 23);
+		frame.getContentPane().add(btnNewButton);
 	}
 	
 	public void readLog() throws IOException{
 		int x=0;
 		boolean escrito=false;
 		if(ruta != "null") {
-			System.out.println("Vamos por "+ x);
-			fichero = new FileWriter("C:\\Users\\sechave\\Desktop\\file.txt");
+			fichero = new FileWriter(save_text.getText());
             pw = new PrintWriter(fichero);
+            archivo = new File(open_text.getText());
 			FileReader fr = new FileReader (archivo);
 			BufferedReader br = new BufferedReader(fr);
 			String linea;
-			while(true) {
+			while(start_filter) {
 				if((linea=br.readLine()) != null){
 					
 					if(linea.indexOf(txtEsbrirFiltroAqui.getText()) != -1) {
@@ -140,8 +155,10 @@ public class Main_PL implements Runnable{
 				}
 				else {
 					if(escrito) {
+					System.out.println("cerrar fichero");
 					fichero.close();
-					fichero = new FileWriter("C:\\Users\\sechave\\Desktop\\file.txt",true);
+					escrito=false;
+					fichero = new FileWriter(save_text.getText(),true);
 					pw = new PrintWriter(fichero);
 					}
 				}
