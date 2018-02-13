@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 
 public class Main_PL implements Runnable{
 
@@ -37,78 +38,46 @@ public class Main_PL implements Runnable{
 	}
 
 	private JFileChooser explorador;
-	private JTextField txtEsbrirFiltroAqui;
-	private String ruta;
+	private String ruta,file_name;
 	private File archivo;
-	private boolean salir;
+	private boolean start_filter;
 	private FileWriter fichero = null;
     private PrintWriter pw = null;
-    private JTextField open_text;
-    private JTextField save_text;
-    private String file_name;
+    private JTextField open_text,save_text,filter_txt;
     private Thread thread_filter;
-    private boolean start_filter;
+    private JButton btnAbrirLog, btnCrearArchivoDe,btnGuardarEn,btnNewButton;
 	
 	public Main_PL() {
-		initialize();
-		explorador = new JFileChooser("\\\\10.0.1.95\\gvp_logs\\GVP_MCP");
-		explorador.setDialogTitle("Abrir documento...");
-		explorador.setFileFilter(new FileNameExtensionFilter("Logs", "log"));
-		salir=false;
-	}
-
-	private void initialize() {
-		file_name="new_file";
-		start_filter=false;
+		
+		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JButton btnAbrirLog = new JButton("Abrir Log");
-		btnAbrirLog.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				open_text.setText(readfile());
-			}
-		});
-		btnAbrirLog.setBounds(25, 15, 100, 25);
-		frame.getContentPane().add(btnAbrirLog);
+		//------------------------------------Panels------------------------------------------//
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(25, 88, 399, 51);
+		panel.setBounds(25, 88, 399, 25);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		
+		JPanel panel_CBs = new JPanel();
+		panel_CBs.setBounds(25, 124, 399, 56);
+		frame.getContentPane().add(panel_CBs);
+		
+		//------------------------------------Labels------------------------------------------//
+		
 		JLabel lblFiltro = new JLabel("Filtro:");
-		lblFiltro.setBounds(10, 16, 34, 16);
+		lblFiltro.setBounds(10, 3, 34, 16);
 		panel.add(lblFiltro);
 		
-		txtEsbrirFiltroAqui = new JTextField();
-		txtEsbrirFiltroAqui.setBounds(46, 13, 353, 22);
-		panel.add(txtEsbrirFiltroAqui);
-		txtEsbrirFiltroAqui.setColumns(10);
+		//------------------------------------TextFields---------------------------------------//
 		
-		JButton btnCrearArchivoDe = new JButton("Ejecutar Filtro");
-		btnCrearArchivoDe.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-					btnCrearArchivoDe.setEnabled(false);
-					btnCrearArchivoDe.setText("Filtro ejecutandose...");
-					start_filter=true;
-					thread_filter = new Thread(window);
-					thread_filter.start();
-			}
-		});
-		btnCrearArchivoDe.setBounds(133, 167, 167, 25);
-		frame.getContentPane().add(btnCrearArchivoDe);
-		
-		JButton btnGuardarEn = new JButton("Guardar en...");
-		btnGuardarEn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				save_text.setText(readDirectory()+"\\"+file_name);
-			}
-		});
-		btnGuardarEn.setBounds(25, 50, 100, 25);
-		frame.getContentPane().add(btnGuardarEn);
+		filter_txt = new JTextField();
+		filter_txt.setBounds(46, 0, 353, 22);
+		filter_txt.setColumns(10);
+		panel.add(filter_txt);
 		
 		open_text = new JTextField();
 		open_text.setBounds(134, 15, 290, 25);
@@ -120,7 +89,90 @@ public class Main_PL implements Runnable{
 		save_text.setBounds(134, 50, 290, 25);
 		frame.getContentPane().add(save_text);
 		
-		JButton btnNewButton = new JButton("Parar Filtro");
+		//------------------------------------Buttons------------------------------------------//
+		
+		btnAbrirLog = new JButton("Abrir Log");
+		btnAbrirLog.setBounds(25, 15, 100, 25);
+		frame.getContentPane().add(btnAbrirLog);
+		
+		btnCrearArchivoDe = new JButton("Ejecutar Filtro");
+		btnCrearArchivoDe.setBounds(134, 191, 167, 25);
+		frame.getContentPane().add(btnCrearArchivoDe);
+		
+		btnGuardarEn = new JButton("Guardar en...");
+		btnGuardarEn.setBounds(25, 50, 100, 25);
+		frame.getContentPane().add(btnGuardarEn);
+		
+		btnNewButton = new JButton("Parar Filtro");
+		btnNewButton.setBounds(133, 227, 167, 23);
+		frame.getContentPane().add(btnNewButton);
+		
+		//------------------------------------CheckBoxes------------------------------------------//
+		
+		JCheckBox CB_error = new JCheckBox("error");
+		panel_CBs.add(CB_error);
+		
+		JCheckBox CB_wav = new JCheckBox(".wav");
+		panel_CBs.add(CB_wav);
+		
+		JCheckBox CB_aspx = new JCheckBox(".aspx");
+		panel_CBs.add(CB_aspx);
+		
+		JCheckBox CB_goto = new JCheckBox("goto :");
+		panel_CBs.add(CB_goto);
+		
+		JCheckBox CB_log = new JCheckBox("log ");
+		panel_CBs.add(CB_log);
+		
+		JCheckBox CB_codi = new JCheckBox("CODIFI");
+		CB_codi.setToolTipText("");
+		panel_CBs.add(CB_codi);
+		
+		JCheckBox CB_js = new JCheckBox(".js");
+		panel_CBs.add(CB_js);
+		
+		//------------------------------------Initialize Variables--------------------------------//
+		initialize();
+		listeners();
+	}
+
+	private void initialize() {
+		
+		file_name="new_file";
+		start_filter=false;
+		
+		//------------------------------------File Chosser--------------------------------//
+		
+		explorador = new JFileChooser("\\\\10.0.1.95\\gvp_logs\\GVP_MCP");
+		explorador.setDialogTitle("Abrir documento...");
+		explorador.setFileFilter(new FileNameExtensionFilter("Logs", "log"));
+		
+	}
+
+	private void listeners() {
+		
+		btnAbrirLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				open_text.setText(readfile());
+			}
+		});
+		
+		btnCrearArchivoDe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					btnCrearArchivoDe.setEnabled(false);
+					btnCrearArchivoDe.setText("Filtro ejecutandose...");
+					start_filter=true;
+					thread_filter = new Thread(window);
+					thread_filter.start();
+			}
+		});
+		
+		btnGuardarEn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				save_text.setText(readDirectory()+"\\"+file_name);
+			}
+		});
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnCrearArchivoDe.setEnabled(true);
@@ -128,8 +180,6 @@ public class Main_PL implements Runnable{
 				start_filter=false;
 			}
 		});
-		btnNewButton.setBounds(133, 203, 167, 23);
-		frame.getContentPane().add(btnNewButton);
 	}
 	
 	public void readLog() throws IOException{
@@ -214,7 +264,7 @@ public class Main_PL implements Runnable{
 	
 	public boolean readFilter(String linea) {
 		String delims = "[,]+";
-		String[] filters = txtEsbrirFiltroAqui.getText().split(delims);
+		String[] filters = filter_txt.getText().split(delims);
 		for(String x:filters) {
 			if(linea.indexOf(x) != -1) {
 				return true;
