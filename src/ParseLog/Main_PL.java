@@ -43,16 +43,20 @@ public class Main_PL implements Runnable{
 	private boolean salir;
 	private FileWriter fichero = null;
     private PrintWriter pw = null;
+    private JTextField open_text;
+    private JTextField save_text;
+    private String file_name;
 	
 	public Main_PL() {
 		initialize();
-		explorador = new JFileChooser();
+		explorador = new JFileChooser("\\\\10.0.1.95\\gvp_logs\\GVP_MCP");
 		explorador.setDialogTitle("Abrir documento...");
 		explorador.setFileFilter(new FileNameExtensionFilter("Logs", "log"));
 		salir=false;
 	}
 
 	private void initialize() {
+		file_name="new_file";
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,39 +65,23 @@ public class Main_PL implements Runnable{
 		JButton btnAbrirLog = new JButton("Abrir Log");
 		btnAbrirLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int seleccion = explorador.showDialog(null, "Abrir!");
-				switch(seleccion) {
-				case JFileChooser.APPROVE_OPTION:
-					archivo = explorador.getSelectedFile();
-					ruta = archivo.getPath();
-				 //seleccionó abrir
-				 break;
-
-				case JFileChooser.CANCEL_OPTION:
-				 //dio click en cancelar o cerro la ventana
-				 break;
-
-				case JFileChooser.ERROR_OPTION:
-				 //llega aqui si sucede un error
-				 break;
-				}
+				open_text.setText(readfile());
 			}
 		});
-		btnAbrirLog.setBounds(167, 30, 97, 25);
+		btnAbrirLog.setBounds(25, 15, 100, 25);
 		frame.getContentPane().add(btnAbrirLog);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(73, 91, 285, 51);
+		panel.setBounds(25, 88, 399, 51);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		JLabel lblFiltro = new JLabel("Filtro:");
-		lblFiltro.setBounds(12, 16, 34, 16);
+		lblFiltro.setBounds(10, 16, 34, 16);
 		panel.add(lblFiltro);
 		
 		txtEsbrirFiltroAqui = new JTextField();
-		txtEsbrirFiltroAqui.setText("Esbrir filtro aqui...");
-		txtEsbrirFiltroAqui.setBounds(67, 13, 202, 22);
+		txtEsbrirFiltroAqui.setBounds(46, 13, 353, 22);
 		panel.add(txtEsbrirFiltroAqui);
 		txtEsbrirFiltroAqui.setColumns(10);
 		
@@ -108,6 +96,25 @@ public class Main_PL implements Runnable{
 		});
 		btnCrearArchivoDe.setBounds(132, 184, 167, 25);
 		frame.getContentPane().add(btnCrearArchivoDe);
+		
+		JButton btnGuardarEn = new JButton("Guardar en...");
+		btnGuardarEn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				save_text.setText(readDirectory()+file_name);
+			}
+		});
+		btnGuardarEn.setBounds(25, 50, 100, 25);
+		frame.getContentPane().add(btnGuardarEn);
+		
+		open_text = new JTextField();
+		open_text.setBounds(134, 15, 290, 25);
+		frame.getContentPane().add(open_text);
+		open_text.setColumns(10);
+		
+		save_text = new JTextField();
+		save_text.setColumns(10);
+		save_text.setBounds(134, 50, 290, 25);
+		frame.getContentPane().add(save_text);
 	}
 	
 	public void readLog() throws IOException{
@@ -140,6 +147,52 @@ public class Main_PL implements Runnable{
 				}
 			}
 		}
+	}
+	
+	public String readDirectory() {
+		explorador.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int seleccion = explorador.showDialog(null, "Abrir!");
+		String ruta="";
+		switch(seleccion) {
+		case JFileChooser.APPROVE_OPTION:
+			archivo = explorador.getSelectedFile();
+			ruta = archivo.getPath();
+		 //seleccionó abrir
+		 break;
+
+		case JFileChooser.CANCEL_OPTION:
+		 //dio click en cancelar o cerro la ventana
+		 break;
+
+		case JFileChooser.ERROR_OPTION:
+		 //llega aqui si sucede un error
+		 break;
+		}
+		return ruta;
+	}
+	
+	public String readfile() {
+		explorador.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int seleccion = explorador.showDialog(null, "Abrir!");
+		String ruta="";
+		switch(seleccion) {
+		case JFileChooser.APPROVE_OPTION:
+			archivo = explorador.getSelectedFile();
+			file_name=archivo.getName();
+			file_name = file_name.replaceAll(".log", "_ParseLog.txt");
+			ruta = archivo.getPath();
+		 //seleccionó abrir
+		 break;
+
+		case JFileChooser.CANCEL_OPTION:
+		 //dio click en cancelar o cerro la ventana
+		 break;
+
+		case JFileChooser.ERROR_OPTION:
+		 //llega aqui si sucede un error
+		 break;
+		}
+		return ruta;
 	}
 	
 	public void run() {
