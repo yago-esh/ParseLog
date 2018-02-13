@@ -22,29 +22,20 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Main_PL {
+public class Main_PL implements Runnable{
 
 	private JFrame frame;
-
+	private static Main_PL window;
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Main_PL window = new Main_PL();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		
+		window = new Main_PL();
+		window.frame.setVisible(true);
+
 	}
 
-	/**
-	 * Create the application.
-	 */
 	private JFileChooser explorador;
 	private JTextField txtEsbrirFiltroAqui;
 	private String ruta;
@@ -61,9 +52,6 @@ public class Main_PL {
 		salir=false;
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
@@ -112,18 +100,17 @@ public class Main_PL {
 		JButton btnCrearArchivoDe = new JButton("Crear Archivo de Salida");
 		btnCrearArchivoDe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					readLog();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+					btnCrearArchivoDe.setEnabled(false);
+					btnCrearArchivoDe.setText("Filtro ejecutandose...");
+					(new Thread(window)).start();
+
 			}
 		});
 		btnCrearArchivoDe.setBounds(132, 184, 167, 25);
 		frame.getContentPane().add(btnCrearArchivoDe);
 	}
 	
-	public void readLog() throws IOException {
+	public void readLog() throws IOException{
 		int x=0;
 		boolean escrito=false;
 		if(ruta != "null") {
@@ -152,6 +139,14 @@ public class Main_PL {
 					}
 				}
 			}
+		}
+	}
+	
+	public void run() {
+		try {
+			readLog();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
