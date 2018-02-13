@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import java.awt.Font;
 import java.awt.Color;
+import javax.swing.ImageIcon;
 
 public class Main_PL implements Runnable{
 
@@ -66,30 +67,37 @@ public class Main_PL implements Runnable{
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(25, 88, 499, 25);
-		frame.getContentPane().add(panel);
+		panel.setOpaque(false);
 		panel.setLayout(null);
+		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBounds(25, 144, 499, 25);
+		panel_1.setOpaque(false);
 		frame.getContentPane().add(panel_1);
 		
 		JLabel lblExcluir = new JLabel("Excluir:");
+		lblExcluir.setForeground(Color.BLACK);
+		lblExcluir.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblExcluir.setBounds(10, 3, 44, 16);
 		panel_1.add(lblExcluir);
 		
 		panel_CBs = new JPanel();
 		panel_CBs.setBounds(10, 111, 514, 33);
+		panel_CBs.setOpaque(false);
 		frame.getContentPane().add(panel_CBs);
 		
 		//------------------------------------Labels------------------------------------------//
 		
 		JLabel lblFiltro = new JLabel("Filtro:");
+		lblFiltro.setForeground(Color.BLACK);
+		lblFiltro.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblFiltro.setBounds(10, 3, 34, 16);
 		panel.add(lblFiltro);
 		
 		JLabel CreatedBy = new JLabel("Created by Yago Echave-Sustaeta");
-		CreatedBy.setForeground(Color.LIGHT_GRAY);
+		CreatedBy.setForeground(Color.DARK_GRAY);
 		CreatedBy.setFont(new Font("Tahoma", Font.BOLD, 13));
 		CreatedBy.setBounds(10, 224, 258, 16);
 		frame.getContentPane().add(CreatedBy);
@@ -142,30 +150,58 @@ public class Main_PL implements Runnable{
 		//------------------------------------CheckBoxes------------------------------------------//
 		
 		JCheckBox CB_JF = new JCheckBox("Juntar Filtros");
+		CB_JF.setFont(new Font("Tahoma", Font.BOLD, 11));
 		CB_JF.setForeground(Color.BLUE);
+		CB_JF.setOpaque(false);
 		panel_CBs.add(CB_JF);
 		
 		JCheckBox CB_error = new JCheckBox("error");
+		CB_error.setForeground(Color.BLACK);
+		CB_error.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_error.setOpaque(false);
 		panel_CBs.add(CB_error);
 		
 		JCheckBox CB_wav = new JCheckBox(".wav");
+		CB_wav.setForeground(Color.BLACK);
+		CB_wav.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_wav.setOpaque(false);
 		panel_CBs.add(CB_wav);
 		
 		JCheckBox CB_aspx = new JCheckBox(".aspx");
+		CB_aspx.setForeground(Color.BLACK);
+		CB_aspx.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_aspx.setOpaque(false);
 		panel_CBs.add(CB_aspx);
 		
 		JCheckBox CB_goto = new JCheckBox("goto :");
+		CB_goto.setForeground(Color.BLACK);
+		CB_goto.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_goto.setOpaque(false);
 		panel_CBs.add(CB_goto);
 		
 		JCheckBox CB_log = new JCheckBox("log ");
+		CB_log.setForeground(Color.BLACK);
+		CB_log.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_log.setOpaque(false);
 		panel_CBs.add(CB_log);
 		
 		JCheckBox CB_codi = new JCheckBox("CODIFI");
+		CB_codi.setForeground(Color.BLACK);
+		CB_codi.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_codi.setOpaque(false);
 		CB_codi.setToolTipText("");
 		panel_CBs.add(CB_codi);
 		
 		JCheckBox CB_js = new JCheckBox(".js");
+		CB_js.setForeground(Color.BLACK);
+		CB_js.setFont(new Font("Tahoma", Font.BOLD, 11));
+		CB_js.setOpaque(false);
 		panel_CBs.add(CB_js);
+		
+		JLabel label = new JLabel("New label");
+		label.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
+		label.setBounds(0, 0, 534, 251);
+		frame.getContentPane().add(label);
 		
 		//------------------------------------Initialize Variables--------------------------------//
 		initialize();
@@ -192,7 +228,10 @@ public class Main_PL implements Runnable{
 		
 		btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				open_text.setText(readfile());
+				String path=readfile();
+				if(path!=null) {
+					open_text.setText(path);
+				}
 			}
 		});
 		
@@ -209,7 +248,10 @@ public class Main_PL implements Runnable{
 		
 		btnSaveIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				save_text.setText(readDirectory()+"\\"+file_name);
+				String path=readDirectory();
+				if(path!=null) {
+					save_text.setText(path+"\\"+file_name);
+				}
 			}
 		});
 		
@@ -274,13 +316,7 @@ public class Main_PL implements Runnable{
 		 //seleccionó abrir
 		 break;
 
-		case JFileChooser.CANCEL_OPTION:
-		 //dio click en cancelar o cerro la ventana
-		 break;
-
-		case JFileChooser.ERROR_OPTION:
-		 //llega aqui si sucede un error
-		 break;
+		default: return null;
 		}
 		return ruta;
 	}
@@ -299,13 +335,7 @@ public class Main_PL implements Runnable{
 		 //seleccionó abrir
 		 break;
 
-		case JFileChooser.CANCEL_OPTION:
-		 //dio click en cancelar o cerro la ventana
-		 break;
-
-		case JFileChooser.ERROR_OPTION:
-		 //llega aqui si sucede un error
-		 break;
+		default: return null;
 		}
 		return ruta;
 	}
