@@ -43,7 +43,7 @@ public class Main_PL implements Runnable{
 	private JFileChooser explorador;
 	private String ruta,file_name;
 	private File archivo;
-	private boolean start_filter;
+	private boolean start_filter, all_filter;
 	private FileWriter fichero = null;
     private PrintWriter pw = null;
     private JTextField open_text,save_text,filter_txt;
@@ -79,7 +79,7 @@ public class Main_PL implements Runnable{
 		panel_1.add(lblExcluir);
 		
 		panel_CBs = new JPanel();
-		panel_CBs.setBounds(25, 111, 499, 33);
+		panel_CBs.setBounds(10, 111, 514, 33);
 		frame.getContentPane().add(panel_CBs);
 		
 		//------------------------------------Labels------------------------------------------//
@@ -138,7 +138,12 @@ public class Main_PL implements Runnable{
 		btnStopFilter.setBounds(307, 188, 167, 23);
 		frame.getContentPane().add(btnStopFilter);
 		
+		
 		//------------------------------------CheckBoxes------------------------------------------//
+		
+		JCheckBox CB_JF = new JCheckBox("Juntar Filtros");
+		CB_JF.setForeground(Color.BLUE);
+		panel_CBs.add(CB_JF);
 		
 		JCheckBox CB_error = new JCheckBox("error");
 		panel_CBs.add(CB_error);
@@ -171,6 +176,7 @@ public class Main_PL implements Runnable{
 		
 		file_name="new_file";
 		start_filter=false;
+		all_filter=false;
 		filter_list = new ArrayList<String>();
 		exclude_list = new ArrayList<String>();
 		
@@ -211,9 +217,7 @@ public class Main_PL implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				btnExecuteFilter.setEnabled(true);
 				btnExecuteFilter.setText("Ejecutar Filtro");
-				start_filter=false;
-				filter_list.clear();
-				exclude_list.clear();
+				clear();
 			}
 		});
 	}
@@ -250,6 +254,13 @@ public class Main_PL implements Runnable{
 				}
 			}
 		}
+	}
+	
+	public void clear() {
+		start_filter=false;
+		all_filter=false;
+		filter_list.clear();
+		exclude_list.clear();
 	}
 	
 	public String readDirectory() {
@@ -300,25 +311,45 @@ public class Main_PL implements Runnable{
 	}
 	
 	public boolean readFilter(String linea) {
+		
 		for(String x:filter_list) {
 			if(linea.indexOf(x) != -1) {
 				if(exclude_list != null && exclude_list.size() != 0) {
 					for(String y:exclude_list) {
 						if(linea.indexOf(y) == -1) {
-							return true;
+							if(all_filter) {
+								if(x == filter_list.get(filter_list.size()-1)) return true;
+							}
+							else return true;
 						}
 					}
 				}
-				else return true;
+				else{
+					if(all_filter) {
+						if(x == filter_list.get(filter_list.size()-1)) return true;
+					}
+					else return true;
+				}
+			}
+			else {
+				if(all_filter) {
+					return false;
+				}
 			}
 		}
 		return false;
+		
 	}
 	
 	public void setFilter() {
 		
-		for( int i=0; i<panel_CBs.getComponentCount(); i++ ) {
-			  JCheckBox checkBox = (JCheckBox)panel_CBs.getComponent( i );
+		JCheckBox checkBox = (JCheckBox)panel_CBs.getComponent( 0 );
+		  if( checkBox.isSelected() ) { 
+		     all_filter=true;
+		  }
+		
+		for( int i=1; i<panel_CBs.getComponentCount(); i++ ) {
+			  checkBox = (JCheckBox)panel_CBs.getComponent( i );
 			  if( checkBox.isSelected() ) { 
 			     filter_list.add(checkBox.getText());
 			  }
