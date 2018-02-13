@@ -17,11 +17,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
+import java.awt.Font;
+import java.awt.Color;
 
 public class Main_PL implements Runnable{
 
@@ -45,25 +48,28 @@ public class Main_PL implements Runnable{
     private PrintWriter pw = null;
     private JTextField open_text,save_text,filter_txt;
     private Thread thread_filter;
-    private JButton btnAbrirLog, btnCrearArchivoDe,btnGuardarEn,btnNewButton;
+    private JButton btnOpenFile, btnExecuteFilter,btnSaveIn,btnStopFilter;
+    private JPanel panel_CBs;
+    private ArrayList<String> filter_list;
 	
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(700, 350, 550, 250);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setTitle("ParseLog");
 		
 		//------------------------------------Panels------------------------------------------//
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(25, 88, 399, 25);
+		panel.setBounds(25, 88, 499, 25);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		
-		JPanel panel_CBs = new JPanel();
-		panel_CBs.setBounds(25, 124, 399, 56);
+		panel_CBs = new JPanel();
+		panel_CBs.setBounds(25, 111, 499, 33);
 		frame.getContentPane().add(panel_CBs);
 		
 		//------------------------------------Labels------------------------------------------//
@@ -72,40 +78,48 @@ public class Main_PL implements Runnable{
 		lblFiltro.setBounds(10, 3, 34, 16);
 		panel.add(lblFiltro);
 		
+		JLabel CreatedBy = new JLabel("Created by Yago Echave-Sustaeta");
+		CreatedBy.setForeground(Color.LIGHT_GRAY);
+		CreatedBy.setFont(new Font("Tahoma", Font.BOLD, 13));
+		CreatedBy.setBounds(10, 191, 258, 16);
+		frame.getContentPane().add(CreatedBy);
+		
 		//------------------------------------TextFields---------------------------------------//
 		
 		filter_txt = new JTextField();
-		filter_txt.setBounds(46, 0, 353, 22);
+		filter_txt.setBounds(46, 0, 453, 22);
 		filter_txt.setColumns(10);
 		panel.add(filter_txt);
 		
 		open_text = new JTextField();
-		open_text.setBounds(134, 15, 290, 25);
+		open_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		open_text.setBounds(144, 15, 380, 25);
 		frame.getContentPane().add(open_text);
 		open_text.setColumns(10);
 		
 		save_text = new JTextField();
+		save_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		save_text.setColumns(10);
-		save_text.setBounds(134, 50, 290, 25);
+		save_text.setBounds(144, 51, 380, 25);
 		frame.getContentPane().add(save_text);
 		
 		//------------------------------------Buttons------------------------------------------//
 		
-		btnAbrirLog = new JButton("Abrir Log");
-		btnAbrirLog.setBounds(25, 15, 100, 25);
-		frame.getContentPane().add(btnAbrirLog);
+		btnOpenFile = new JButton("Abrir Log");
+		btnOpenFile.setBounds(25, 15, 110, 25);
+		frame.getContentPane().add(btnOpenFile);
 		
-		btnCrearArchivoDe = new JButton("Ejecutar Filtro");
-		btnCrearArchivoDe.setBounds(134, 191, 167, 25);
-		frame.getContentPane().add(btnCrearArchivoDe);
+		btnExecuteFilter = new JButton("Ejecutar Filtro");
+		btnExecuteFilter.setBounds(75, 155, 167, 25);
+		frame.getContentPane().add(btnExecuteFilter);
 		
-		btnGuardarEn = new JButton("Guardar en...");
-		btnGuardarEn.setBounds(25, 50, 100, 25);
-		frame.getContentPane().add(btnGuardarEn);
+		btnSaveIn = new JButton("Guardar en...");
+		btnSaveIn.setBounds(25, 50, 110, 25);
+		frame.getContentPane().add(btnSaveIn);
 		
-		btnNewButton = new JButton("Parar Filtro");
-		btnNewButton.setBounds(133, 227, 167, 23);
-		frame.getContentPane().add(btnNewButton);
+		btnStopFilter = new JButton("Parar Filtro");
+		btnStopFilter.setBounds(307, 155, 167, 23);
+		frame.getContentPane().add(btnStopFilter);
 		
 		//------------------------------------CheckBoxes------------------------------------------//
 		
@@ -140,6 +154,7 @@ public class Main_PL implements Runnable{
 		
 		file_name="new_file";
 		start_filter=false;
+		filter_list = new ArrayList<String>();
 		
 		//------------------------------------File Chosser--------------------------------//
 		
@@ -151,33 +166,35 @@ public class Main_PL implements Runnable{
 
 	private void listeners() {
 		
-		btnAbrirLog.addActionListener(new ActionListener() {
+		btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				open_text.setText(readfile());
 			}
 		});
 		
-		btnCrearArchivoDe.addActionListener(new ActionListener() {
+		btnExecuteFilter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					btnCrearArchivoDe.setEnabled(false);
-					btnCrearArchivoDe.setText("Filtro ejecutandose...");
+					btnExecuteFilter.setEnabled(false);
+					btnExecuteFilter.setText("Filtro ejecutandose...");
+					setFilter();
 					start_filter=true;
 					thread_filter = new Thread(window);
 					thread_filter.start();
 			}
 		});
 		
-		btnGuardarEn.addActionListener(new ActionListener() {
+		btnSaveIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				save_text.setText(readDirectory()+"\\"+file_name);
 			}
 		});
 		
-		btnNewButton.addActionListener(new ActionListener() {
+		btnStopFilter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				btnCrearArchivoDe.setEnabled(true);
-				btnCrearArchivoDe.setText("Ejecutar Filtro");
+				btnExecuteFilter.setEnabled(true);
+				btnExecuteFilter.setText("Ejecutar Filtro");
 				start_filter=false;
+				filter_list.clear();
 			}
 		});
 	}
@@ -239,6 +256,7 @@ public class Main_PL implements Runnable{
 	}
 	
 	public String readfile() {
+		
 		explorador.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		int seleccion = explorador.showDialog(null, "Abrir!");
 		String ruta="";
@@ -263,14 +281,30 @@ public class Main_PL implements Runnable{
 	}
 	
 	public boolean readFilter(String linea) {
-		String delims = "[,]+";
-		String[] filters = filter_txt.getText().split(delims);
-		for(String x:filters) {
+		for(String x:filter_list) {
 			if(linea.indexOf(x) != -1) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public void setFilter() {
+		
+		for( int i=0; i<panel_CBs.getComponentCount(); i++ ) {
+			  JCheckBox checkBox = (JCheckBox)panel_CBs.getComponent( i );
+			  if( checkBox.isSelected() ) { 
+			     filter_list.add(checkBox.getText());
+			  }
+			}
+		
+		if(!filter_txt.getText().isEmpty()) {
+			String delims = "[,]+";
+			String[] filters = filter_txt.getText().split(delims);
+			for(String filt: filters){
+				filter_list.add(filt);
+			}
+		}
 	}
 	
 	public void run() {
