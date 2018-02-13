@@ -145,10 +145,10 @@ public class Main_PL implements Runnable{
 			while(start_filter) {
 				if((linea=br.readLine()) != null){
 					
-					if(linea.indexOf(txtEsbrirFiltroAqui.getText()) != -1) {
+					if(readFilter(linea)) {
 						x++;
 						System.out.println("Vamos por "+ x);
-						System.out.println("Vamos a escribir "+ linea);
+						System.out.println(linea);
 						pw.println(linea);
 						escrito=true;
 					}
@@ -210,6 +210,17 @@ public class Main_PL implements Runnable{
 		 break;
 		}
 		return ruta;
+	}
+	
+	public boolean readFilter(String linea) {
+		String delims = "[,]+";
+		String[] filters = txtEsbrirFiltroAqui.getText().split(delims);
+		for(String x:filters) {
+			if(linea.indexOf(x) != -1) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void run() {
