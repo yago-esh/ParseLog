@@ -50,13 +50,14 @@ public class Main_PL implements Runnable{
     private Thread thread_filter;
     private JButton btnOpenFile, btnExecuteFilter,btnSaveIn,btnStopFilter;
     private JPanel panel_CBs;
-    private ArrayList<String> filter_list;
+    private ArrayList<String> filter_list, exclude_list;
+    private JTextField Exclude_txt;
 	
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
-		frame.setBounds(700, 350, 550, 250);
+		frame.setBounds(700, 350, 550, 290);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
@@ -67,6 +68,15 @@ public class Main_PL implements Runnable{
 		panel.setBounds(25, 88, 499, 25);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		panel_1.setBounds(25, 144, 499, 25);
+		frame.getContentPane().add(panel_1);
+		
+		JLabel lblExcluir = new JLabel("Excluir:");
+		lblExcluir.setBounds(10, 3, 44, 16);
+		panel_1.add(lblExcluir);
 		
 		panel_CBs = new JPanel();
 		panel_CBs.setBounds(25, 111, 499, 33);
@@ -81,7 +91,7 @@ public class Main_PL implements Runnable{
 		JLabel CreatedBy = new JLabel("Created by Yago Echave-Sustaeta");
 		CreatedBy.setForeground(Color.LIGHT_GRAY);
 		CreatedBy.setFont(new Font("Tahoma", Font.BOLD, 13));
-		CreatedBy.setBounds(10, 191, 258, 16);
+		CreatedBy.setBounds(10, 224, 258, 16);
 		frame.getContentPane().add(CreatedBy);
 		
 		//------------------------------------TextFields---------------------------------------//
@@ -92,16 +102,23 @@ public class Main_PL implements Runnable{
 		panel.add(filter_txt);
 		
 		open_text = new JTextField();
+		open_text.setText("\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\GVP_MCP.20180213_124634_933.log");
 		open_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		open_text.setBounds(144, 15, 380, 25);
 		frame.getContentPane().add(open_text);
 		open_text.setColumns(10);
 		
 		save_text = new JTextField();
+		save_text.setText("C:\\Users\\sechave\\Desktop\\GVP_MCP.20180213_124634_933_ParseLog.txt");
 		save_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		save_text.setColumns(10);
 		save_text.setBounds(144, 51, 380, 25);
 		frame.getContentPane().add(save_text);
+		
+		Exclude_txt = new JTextField();
+		Exclude_txt.setColumns(10);
+		Exclude_txt.setBounds(64, 0, 435, 22);
+		panel_1.add(Exclude_txt);
 		
 		//------------------------------------Buttons------------------------------------------//
 		
@@ -110,7 +127,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnOpenFile);
 		
 		btnExecuteFilter = new JButton("Ejecutar Filtro");
-		btnExecuteFilter.setBounds(75, 155, 167, 25);
+		btnExecuteFilter.setBounds(75, 188, 167, 25);
 		frame.getContentPane().add(btnExecuteFilter);
 		
 		btnSaveIn = new JButton("Guardar en...");
@@ -118,7 +135,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnSaveIn);
 		
 		btnStopFilter = new JButton("Parar Filtro");
-		btnStopFilter.setBounds(307, 155, 167, 23);
+		btnStopFilter.setBounds(307, 188, 167, 23);
 		frame.getContentPane().add(btnStopFilter);
 		
 		//------------------------------------CheckBoxes------------------------------------------//
@@ -155,6 +172,7 @@ public class Main_PL implements Runnable{
 		file_name="new_file";
 		start_filter=false;
 		filter_list = new ArrayList<String>();
+		exclude_list = new ArrayList<String>();
 		
 		//------------------------------------File Chosser--------------------------------//
 		
@@ -195,6 +213,7 @@ public class Main_PL implements Runnable{
 				btnExecuteFilter.setText("Ejecutar Filtro");
 				start_filter=false;
 				filter_list.clear();
+				exclude_list.clear();
 			}
 		});
 	}
@@ -283,7 +302,14 @@ public class Main_PL implements Runnable{
 	public boolean readFilter(String linea) {
 		for(String x:filter_list) {
 			if(linea.indexOf(x) != -1) {
-				return true;
+				if(exclude_list != null && exclude_list.size() != 0) {
+					for(String y:exclude_list) {
+						if(linea.indexOf(y) == -1) {
+							return true;
+						}
+					}
+				}
+				else return true;
 			}
 		}
 		return false;
@@ -303,6 +329,14 @@ public class Main_PL implements Runnable{
 			String[] filters = filter_txt.getText().split(delims);
 			for(String filt: filters){
 				filter_list.add(filt);
+			}
+		}
+		
+		if(!Exclude_txt.getText().isEmpty()) {
+			String delims = "[,]+";
+			String[] excludes = Exclude_txt.getText().split(delims);
+			for(String filt: excludes){
+				exclude_list.add(filt);
 			}
 		}
 	}
