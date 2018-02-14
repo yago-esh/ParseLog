@@ -1,18 +1,12 @@
 package ParseLog;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import javafx.stage.FileChooser;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -53,6 +47,7 @@ public class Main_PL implements Runnable{
     private JPanel panel_CBs;
     private ArrayList<String> filter_list, exclude_list;
     private JTextField Exclude_txt;
+    private BufferedReader br;
 	
 	public Main_PL() {
 		
@@ -272,7 +267,7 @@ public class Main_PL implements Runnable{
             pw = new PrintWriter(fichero);
             archivo = new File(open_text.getText());
 			FileReader fr = new FileReader (archivo);
-			BufferedReader br = new BufferedReader(fr);
+			br = new BufferedReader(fr);
 			String linea;
 			while(start_filter) {
 				if((linea=br.readLine()) != null){
@@ -342,33 +337,40 @@ public class Main_PL implements Runnable{
 	
 	public boolean readFilter(String linea) {
 		
+		boolean toReturn=false;
+		
 		for(String x:filter_list) {
 			if(linea.indexOf(x) != -1) {
-				if(exclude_list != null && exclude_list.size() != 0) {
-					for(String y:exclude_list) {
-						if(linea.indexOf(y) == -1) {
-							if(all_filter) {
-								if(x == filter_list.get(filter_list.size()-1)) return true;
-							}
-							else return true;
-						}
+				if(all_filter) {
+					if(x == filter_list.get(filter_list.size()-1)) {
+						toReturn= true;
+						break;
 					}
 				}
-				else{
-					if(all_filter) {
-						if(x == filter_list.get(filter_list.size()-1)) return true;
-					}
-					else return true;
+				else {
+					toReturn=true;
+					break;
 				}
 			}
-			else {
+			else{
 				if(all_filter) {
-					return false;
+					if(x != filter_list.get(filter_list.size()-1)) {
+						break;
+					}
 				}
 			}
 		}
-		return false;
 		
+		if(exclude_list != null && exclude_list.size() != 0) {
+			for(String y:exclude_list) {
+				if(linea.indexOf(y) != -1) {
+					toReturn=false;
+					break;
+				}
+			}
+		}
+
+		return toReturn;
 	}
 	
 	public void setFilter() {
