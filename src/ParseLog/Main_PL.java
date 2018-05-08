@@ -11,7 +11,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -48,12 +52,17 @@ public class Main_PL implements Runnable{
     private ArrayList<String> filter_list, exclude_list;
     private JTextField Exclude_txt;
     private BufferedReader br;
+	private JButton SimpleModeBtn;
+	private String myIP;
+	private boolean SimpleMode;
+	private ArrayList<String> TrazaCode;
+	private ArrayList<String> TrazaCodeAll;
 	
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
-		frame.setBounds(700, 350, 550, 290);
+		frame.setBounds(700, 350, 550, 310);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
@@ -61,14 +70,14 @@ public class Main_PL implements Runnable{
 		//------------------------------------Panels------------------------------------------//
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(25, 88, 499, 25);
+		panel.setBounds(25, 116, 499, 25);
 		panel.setOpaque(false);
 		panel.setLayout(null);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBounds(25, 144, 499, 25);
+		panel_1.setBounds(25, 178, 499, 25);
 		panel_1.setOpaque(false);
 		frame.getContentPane().add(panel_1);
 		
@@ -79,7 +88,7 @@ public class Main_PL implements Runnable{
 		panel_1.add(lblExcluir);
 		
 		panel_CBs = new JPanel();
-		panel_CBs.setBounds(10, 111, 514, 33);
+		panel_CBs.setBounds(10, 144, 514, 33);
 		panel_CBs.setOpaque(false);
 		frame.getContentPane().add(panel_CBs);
 		
@@ -94,7 +103,7 @@ public class Main_PL implements Runnable{
 		JLabel CreatedBy = new JLabel("Created by Yago Echave-Sustaeta");
 		CreatedBy.setForeground(Color.DARK_GRAY);
 		CreatedBy.setFont(new Font("Tahoma", Font.BOLD, 13));
-		CreatedBy.setBounds(10, 224, 258, 16);
+		CreatedBy.setBounds(290, 240, 234, 16);
 		frame.getContentPane().add(CreatedBy);
 		
 		//------------------------------------TextFields---------------------------------------//
@@ -104,18 +113,27 @@ public class Main_PL implements Runnable{
 		filter_txt.setColumns(10);
 		panel.add(filter_txt);
 		
+		JLabel Version = new JLabel("Versi\u00F3n DEVELOP");
+		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
+		Version.setBounds(10, 240, 110, 16);
+		frame.getContentPane().add(Version);
+		
+		SimpleModeBtn = new JButton("Modo Simplificado");
+		SimpleModeBtn.setBounds(181, 8, 170, 25);
+		frame.getContentPane().add(SimpleModeBtn);
+		
 		open_text = new JTextField();
 		open_text.setText("\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\GVP_MCP.20180213_124634_933.log");
 		open_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		open_text.setBounds(144, 15, 380, 25);
+		open_text.setBounds(144, 46, 380, 25);
 		frame.getContentPane().add(open_text);
 		open_text.setColumns(10);
 		
 		save_text = new JTextField();
-		save_text.setText("C:\\Users\\sechave\\Desktop\\GVP_MCP.20180213_124634_933_ParseLog.txt");
+		save_text.setText("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop\\ParseLog.txt");
 		save_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		save_text.setColumns(10);
-		save_text.setBounds(144, 51, 380, 25);
+		save_text.setBounds(144, 82, 380, 25);
 		frame.getContentPane().add(save_text);
 		
 		Exclude_txt = new JTextField();
@@ -126,19 +144,19 @@ public class Main_PL implements Runnable{
 		//------------------------------------Buttons------------------------------------------//
 		
 		btnOpenFile = new JButton("Abrir Log");
-		btnOpenFile.setBounds(25, 15, 110, 25);
+		btnOpenFile.setBounds(25, 46, 110, 25);
 		frame.getContentPane().add(btnOpenFile);
 		
 		btnExecuteFilter = new JButton("Ejecutar Filtro");
-		btnExecuteFilter.setBounds(75, 188, 167, 25);
+		btnExecuteFilter.setBounds(72, 212, 167, 25);
 		frame.getContentPane().add(btnExecuteFilter);
 		
 		btnSaveIn = new JButton("Guardar en...");
-		btnSaveIn.setBounds(25, 50, 110, 25);
+		btnSaveIn.setBounds(25, 81, 110, 25);
 		frame.getContentPane().add(btnSaveIn);
 		
 		btnStopFilter = new JButton("Parar Filtro");
-		btnStopFilter.setBounds(307, 188, 167, 23);
+		btnStopFilter.setBounds(304, 212, 167, 23);
 		frame.getContentPane().add(btnStopFilter);
 		
 		
@@ -193,10 +211,10 @@ public class Main_PL implements Runnable{
 		CB_js.setOpaque(false);
 		panel_CBs.add(CB_js);
 		
-		JLabel label = new JLabel("New label");
-		label.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
-		label.setBounds(0, 0, 534, 251);
-		frame.getContentPane().add(label);
+		JLabel background = new JLabel("New label");
+		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
+		background.setBounds(0, 0, 534, 264);
+		frame.getContentPane().add(background);
 		
 		//------------------------------------Initialize Variables--------------------------------//
 		initialize();
@@ -205,11 +223,15 @@ public class Main_PL implements Runnable{
 
 	private void initialize() {
 		
+		TrazaCode = new ArrayList<String>();
+		TrazaCodeAll = new ArrayList<String>();
 		file_name="new_file";
 		start_filter=false;
 		all_filter=false;
 		filter_list = new ArrayList<String>();
 		exclude_list = new ArrayList<String>();
+		myIP = "";
+		SimpleMode=false;
 		
 		//------------------------------------File Chosser--------------------------------//
 		
@@ -257,11 +279,43 @@ public class Main_PL implements Runnable{
 				clear();
 			}
 		});
+		
+		SimpleModeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SimpleModeOn();
+			}
+		});
+	}
+	
+	public void SimpleModeOn() {
+		SimpleModeBtn.setForeground(Color.RED);
+		SimpleMode=true;
+		Enumeration e;
+		try {
+			e = NetworkInterface.getNetworkInterfaces();
+			while(e.hasMoreElements()){
+			    NetworkInterface n = (NetworkInterface) e.nextElement();
+			    Enumeration ee = n.getInetAddresses();
+			    while (ee.hasMoreElements())
+			    {
+			        InetAddress i = (InetAddress) ee.nextElement();
+			        if(i.getHostAddress().indexOf("10.1.")!=-1) {
+			        	myIP=i.getHostAddress();
+			        }
+			        
+			    }
+			}
+		} catch (SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(myIP);
 	}
 	
 	public void readLog() throws IOException{
 		int x=0;
-		boolean escrito=false;
+		boolean escrito=false,ignore=true;
+		String code="", Lineaux="";
 		if(ruta != "null") {
 			fichero = new FileWriter(save_text.getText());
             pw = new PrintWriter(fichero);
@@ -271,13 +325,39 @@ public class Main_PL implements Runnable{
 			String linea;
 			while(start_filter) {
 				if((linea=br.readLine()) != null){
-					
-					if(readFilter(linea)) {
-						x++;
-						System.out.println("Vamos por "+ x);
-						System.out.println(linea);
-						pw.println(linea);
-						escrito=true;
+					if(linea.indexOf("Int")!=-1 || linea.indexOf("Std")!=-1) {
+						if(SimpleMode) {
+							String[] parts = linea.split(" ");
+							if(!lookForTrazaCodeAll(parts[3])) {
+								TrazaCodeAll.add(parts[3]);
+								Lineaux=linea;
+								linea=br.readLine();
+								ignore=(linea.indexOf(myIP)==-1);
+								if(!ignore) {
+									TrazaCode.add(parts[3]);
+									if(readFilter(Lineaux)){
+										pw.println(Lineaux);
+									}
+									if(readFilter(linea)){
+										pw.println(linea);
+									}
+								}
+								escrito=true;
+							}
+							else if (lookForTrazaCode(parts[3])){
+								if(readFilter(linea)){
+									pw.println(linea);
+								}
+								escrito=true;
+							}		
+						}
+						else if(readFilter(linea)) {
+							x++;
+							System.out.println("Vamos por "+ x);
+							System.out.println(linea);
+							pw.println(linea);
+							escrito=true;
+						}
 					}
 				}
 				else {
@@ -291,6 +371,24 @@ public class Main_PL implements Runnable{
 				}
 			}
 		}
+	}
+	
+	public boolean lookForTrazaCode(String code) {
+		for(String SavedCode: TrazaCode) {
+			if(SavedCode.equals(code)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean lookForTrazaCodeAll(String code) {
+		for(String SavedCode: TrazaCodeAll) {
+			if(SavedCode.equals(code)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void clear() {
