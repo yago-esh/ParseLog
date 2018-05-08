@@ -100,7 +100,7 @@ public class Main_PL implements Runnable{
 		lblExcluir.setBounds(10, 3, 44, 16);
 		panel_1.add(lblExcluir);
 		
-		JLabel Version = new JLabel("Versi\u00F3n DEVELOP");
+		JLabel Version = new JLabel("Versi\u00F3n 1.1.9");
 		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
 		Version.setBounds(10, 240, 110, 16);
 		frame.getContentPane().add(Version);
@@ -448,7 +448,16 @@ public class Main_PL implements Runnable{
 	public boolean readFilter(String linea) {
 		
 		boolean toReturn=false;
-		
+		if(filter_list.isEmpty()) {
+			if(exclude_list != null && exclude_list.size() != 0) {
+				for(String y:exclude_list) {
+					if(linea.indexOf(y) != -1) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 		for(String x:filter_list) {
 			if(linea.indexOf(x) != -1) {
 				if(all_filter) {
@@ -518,6 +527,7 @@ public class Main_PL implements Runnable{
 		try {
 			readLog();
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,"Archivo Log no encontrado");
 			e.printStackTrace();
 		}
 	}
