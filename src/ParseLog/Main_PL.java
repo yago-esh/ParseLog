@@ -19,9 +19,11 @@ import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 
@@ -57,6 +59,7 @@ public class Main_PL implements Runnable{
 	private boolean SimpleMode;
 	private ArrayList<String> TrazaCode;
 	private ArrayList<String> TrazaCodeAll;
+	private JButton CreatedBy;
 	
 	public Main_PL() {
 		
@@ -81,12 +84,6 @@ public class Main_PL implements Runnable{
 		panel_1.setOpaque(false);
 		frame.getContentPane().add(panel_1);
 		
-		JLabel lblExcluir = new JLabel("Excluir:");
-		lblExcluir.setForeground(Color.BLACK);
-		lblExcluir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblExcluir.setBounds(10, 3, 44, 16);
-		panel_1.add(lblExcluir);
-		
 		panel_CBs = new JPanel();
 		panel_CBs.setBounds(10, 144, 514, 33);
 		panel_CBs.setOpaque(false);
@@ -100,11 +97,21 @@ public class Main_PL implements Runnable{
 		lblFiltro.setBounds(10, 3, 34, 16);
 		panel.add(lblFiltro);
 		
-		JLabel CreatedBy = new JLabel("Created by Yago Echave-Sustaeta");
-		CreatedBy.setForeground(Color.DARK_GRAY);
-		CreatedBy.setFont(new Font("Tahoma", Font.BOLD, 13));
-		CreatedBy.setBounds(290, 240, 234, 16);
-		frame.getContentPane().add(CreatedBy);
+		JLabel lblExcluir = new JLabel("Excluir:");
+		lblExcluir.setForeground(Color.BLACK);
+		lblExcluir.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblExcluir.setBounds(10, 3, 44, 16);
+		panel_1.add(lblExcluir);
+		
+		JLabel Version = new JLabel("Versi\u00F3n DEVELOP");
+		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
+		Version.setBounds(10, 240, 110, 16);
+		frame.getContentPane().add(Version);
+		
+		JLabel background = new JLabel("New label");
+		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
+		background.setBounds(0, 0, 534, 264);
+		frame.getContentPane().add(background);
 		
 		//------------------------------------TextFields---------------------------------------//
 		
@@ -112,15 +119,6 @@ public class Main_PL implements Runnable{
 		filter_txt.setBounds(46, 0, 453, 22);
 		filter_txt.setColumns(10);
 		panel.add(filter_txt);
-		
-		JLabel Version = new JLabel("Versi\u00F3n DEVELOP");
-		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
-		Version.setBounds(10, 240, 110, 16);
-		frame.getContentPane().add(Version);
-		
-		SimpleModeBtn = new JButton("Modo Simplificado");
-		SimpleModeBtn.setBounds(181, 8, 170, 25);
-		frame.getContentPane().add(SimpleModeBtn);
 		
 		open_text = new JTextField();
 		open_text.setText("\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\GVP_MCP.20180213_124634_933.log");
@@ -158,6 +156,19 @@ public class Main_PL implements Runnable{
 		btnStopFilter = new JButton("Parar Filtro");
 		btnStopFilter.setBounds(304, 212, 167, 23);
 		frame.getContentPane().add(btnStopFilter);
+		
+		SimpleModeBtn = new JButton("Modo Simplificado");
+		SimpleModeBtn.setBounds(181, 8, 170, 25);
+		frame.getContentPane().add(SimpleModeBtn);
+		
+		CreatedBy = new JButton("");
+		CreatedBy.setBorder(null);
+		CreatedBy.setOpaque(false);
+		CreatedBy.setIcon(new ImageIcon(Main_PL.class.getResource("/javax/swing/plaf/metal/icons/ocean/info.png")));
+		CreatedBy.setBackground(Color.LIGHT_GRAY);
+		CreatedBy.setBounds(490, 224, 32, 32);
+		CreatedBy.setMargin(new Insets(0, 0, 0, 0));
+		frame.getContentPane().add(CreatedBy);
 		
 		
 		//------------------------------------CheckBoxes------------------------------------------//
@@ -211,10 +222,6 @@ public class Main_PL implements Runnable{
 		CB_js.setOpaque(false);
 		panel_CBs.add(CB_js);
 		
-		JLabel background = new JLabel("New label");
-		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
-		background.setBounds(0, 0, 534, 264);
-		frame.getContentPane().add(background);
 		
 		//------------------------------------Initialize Variables--------------------------------//
 		initialize();
@@ -283,6 +290,12 @@ public class Main_PL implements Runnable{
 		SimpleModeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SimpleModeOn();
+			}
+		});
+		
+		CreatedBy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null,"Created by: Yago Echave-Sustaeta Hernán");
 			}
 		});
 	}
