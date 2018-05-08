@@ -31,16 +31,6 @@ public class Main_PL implements Runnable{
 
 	private JFrame frame;
 	private static Main_PL window;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		
-		window = new Main_PL();
-		window.frame.setVisible(true);
-
-	}
-
 	private JFileChooser explorador;
 	private String ruta,file_name;
 	private File archivo;
@@ -60,7 +50,14 @@ public class Main_PL implements Runnable{
 	private ArrayList<String> TrazaCode;
 	private ArrayList<String> TrazaCodeAll;
 	private JButton CreatedBy;
-	
+
+	public static void main(String[] args) {
+		
+		window = new Main_PL();
+		window.frame.setVisible(true);
+
+	}
+
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
@@ -108,10 +105,6 @@ public class Main_PL implements Runnable{
 		Version.setBounds(10, 240, 110, 16);
 		frame.getContentPane().add(Version);
 		
-		JLabel background = new JLabel("New label");
-		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
-		background.setBounds(0, 0, 534, 264);
-		frame.getContentPane().add(background);
 		
 		//------------------------------------TextFields---------------------------------------//
 		
@@ -222,6 +215,12 @@ public class Main_PL implements Runnable{
 		CB_js.setOpaque(false);
 		panel_CBs.add(CB_js);
 		
+		//-----------------------------------------Background--------------------------------------//
+		
+		JLabel background = new JLabel("New label");
+		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
+		background.setBounds(0, 0, 534, 264);
+		frame.getContentPane().add(background);
 		
 		//------------------------------------Initialize Variables--------------------------------//
 		initialize();
@@ -303,12 +302,12 @@ public class Main_PL implements Runnable{
 	public void SimpleModeOn() {
 		SimpleModeBtn.setForeground(Color.RED);
 		SimpleMode=true;
-		Enumeration e;
+		Enumeration<NetworkInterface> e;
 		try {
 			e = NetworkInterface.getNetworkInterfaces();
 			while(e.hasMoreElements()){
 			    NetworkInterface n = (NetworkInterface) e.nextElement();
-			    Enumeration ee = n.getInetAddresses();
+			    Enumeration<InetAddress> ee = n.getInetAddresses();
 			    while (ee.hasMoreElements())
 			    {
 			        InetAddress i = (InetAddress) ee.nextElement();
@@ -328,7 +327,7 @@ public class Main_PL implements Runnable{
 	public void readLog() throws IOException{
 		int x=0;
 		boolean escrito=false,ignore=true;
-		String code="", Lineaux="";
+		String Lineaux="";
 		if(ruta != "null") {
 			fichero = new FileWriter(save_text.getText());
             pw = new PrintWriter(fichero);
