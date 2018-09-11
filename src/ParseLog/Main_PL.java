@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 
@@ -56,13 +57,14 @@ public class Main_PL implements Runnable{
 		
 		window = new Main_PL();
 		window.frame.setVisible(true);
-
+		
 	}
 
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Img/Parse_log.png")));
 		frame.setBounds(700, 350, 550, 298);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
