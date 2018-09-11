@@ -49,6 +49,7 @@ public class Main_PL implements Runnable{
 	private boolean SimpleMode;
 	private ArrayList<String> TrazaCode;
 	private ArrayList<String> TrazaCodeAll;
+	private ArrayList<String> FirstLine;
 	private JButton CreatedBy;
 
 	public static void main(String[] args) {
@@ -62,7 +63,7 @@ public class Main_PL implements Runnable{
 		
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
-		frame.setBounds(700, 350, 550, 310);
+		frame.setBounds(700, 350, 550, 298);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
@@ -236,6 +237,7 @@ public class Main_PL implements Runnable{
 		all_filter=false;
 		filter_list = new ArrayList<String>();
 		exclude_list = new ArrayList<String>();
+		FirstLine = new ArrayList<String>();
 		myIP = "";
 		SimpleMode=false;
 		
@@ -327,7 +329,6 @@ public class Main_PL implements Runnable{
 	public void readLog() throws IOException{
 		int x=0;
 		boolean escrito=false,ignore=true;
-		String Lineaux="";
 		if(ruta != "null") {
 			fichero = new FileWriter(save_text.getText());
             pw = new PrintWriter(fichero);
@@ -341,20 +342,21 @@ public class Main_PL implements Runnable{
 						if(SimpleMode) {
 							String[] parts = linea.split(" ");
 							if(!lookForTrazaCodeAll(parts[3])) {
-								TrazaCodeAll.add(parts[3]);
-								Lineaux=linea;
-								linea=br.readLine();
-								ignore=(linea.indexOf(myIP)==-1);
-								if(!ignore) {
-									TrazaCode.add(parts[3]);
-									if(readFilter(Lineaux)){
-										pw.println(Lineaux);
-									}
-									if(readFilter(linea)){
-										pw.println(linea);
-									}
+								if(linea.indexOf("incall_initiated")!=-1) {
+									FirstLine.add(linea);
 								}
-								escrito=true;
+								else {
+									TrazaCodeAll.add(parts[3]);
+									ignore=(linea.indexOf(myIP)==-1);
+									if(!ignore) {
+										TrazaCode.add(parts[3]);
+										pw.println(PrintFirstLine(parts[3]));
+										if(readFilter(linea)){
+											pw.println(linea);
+										}
+									}
+									escrito=true;
+								}
 							}
 							else if (lookForTrazaCode(parts[3])){
 								if(readFilter(linea)){
@@ -383,6 +385,16 @@ public class Main_PL implements Runnable{
 				}
 			}
 		}
+	}
+	
+	public String PrintFirstLine(String code) {
+		for (String linea : FirstLine) {
+			String[] parts = linea.split(" ");
+			if (code.equals(parts[3])) {
+				return linea;
+			}
+		}
+		return null;
 	}
 	
 	public boolean lookForTrazaCode(String code) {
