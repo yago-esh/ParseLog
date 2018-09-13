@@ -117,7 +117,7 @@ public class Main_PL implements Runnable{
 		panel.add(filter_txt);
 		
 		open_text = new JTextField();
-		open_text.setText("\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\GVP_MCP.20180213_124634_933.log");
+		open_text.setText(FindMostRecentLog());
 		open_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		open_text.setBounds(144, 46, 380, 25);
 		frame.getContentPane().add(open_text);
@@ -301,6 +301,15 @@ public class Main_PL implements Runnable{
 				JOptionPane.showMessageDialog(null,"Created by: Yago Echave-Sustaeta Hernán");
 			}
 		});
+	}
+	
+	public String FindMostRecentLog() {
+		
+		File folder = new File("\\\\10.0.1.95\\gvp_logs\\GVP_MCP");
+		File[] listOfFiles = folder.listFiles();
+		
+		return "\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\" + listOfFiles[listOfFiles.length-1].getName();
+
 	}
 	
 	public void SimpleModeOn() {
