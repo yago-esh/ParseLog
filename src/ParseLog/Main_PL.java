@@ -61,7 +61,7 @@ public class Main_PL implements Runnable{
 		window = new Main_PL();
 		window.frame.setVisible(true);
 		systray = new Systray();
-		
+		systray.loadFiles();
 	}
 
 	public Main_PL() {
@@ -70,7 +70,7 @@ public class Main_PL implements Runnable{
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Img/Parse_log.png")));
 		frame.setBounds(700, 350, 550, 298);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
 		
@@ -259,7 +259,13 @@ public class Main_PL implements Runnable{
 		
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				systray.saveOptions();
+				if(systray.getOpcMinimize()) {
+					frame.setVisible(false);
+				}
+				else {
+					systray.saveOptions();
+					System.exit(0);
+				}
 			}
 		});
 		
