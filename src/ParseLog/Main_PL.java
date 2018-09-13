@@ -57,6 +57,7 @@ public class Main_PL implements Runnable{
 		
 		window = new Main_PL();
 		window.frame.setVisible(true);
+		new Systray();
 		
 	}
 
