@@ -9,6 +9,9 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.net.URL;
 
 public class Systray {
@@ -52,6 +55,38 @@ public class Systray {
 	        } catch (AWTException e) {
 	            System.out.println("TrayIcon could not be added.");
 	        }
+        }
+	}
+	
+	public void saveOptions() {
+		FileWriter fichero = null;
+		try
+        {
+			new File("C:\\Users\\"+System.getProperty("user.name")+"\\Documents\\Virtual_Totem").mkdirs();
+			URL url = System.class.getResource("/options/options.txt");
+			System.out.println("What URL: "+url);
+			System.out.println("What URL.toString: "+url.toString().substring(6));
+			fichero = new FileWriter(url.toString().substring(6));
+            PrintWriter pw = new PrintWriter(fichero);
+            
+            pw.println("que pasa loco");
+            pw.println("que pasa loco");
+            pw.println("que pasa loco");
+            pw.close();
+//            for (int x=0; x<options.length; x++) {
+//                pw.println(options[x]);
+//            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+           try {
+
+           if (null != fichero)
+              fichero.close();
+           } catch (Exception e2) {
+              e2.printStackTrace();
+           }
         }
 	}
 
