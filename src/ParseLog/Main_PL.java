@@ -302,7 +302,7 @@ public class Main_PL implements Runnable{
 			public void actionPerformed(ActionEvent arg0) {
 				String path=readDirectory();
 				if(path!=null) {
-					save_text.setText(path+"\\"+file_name);
+					save_text.setText(path);
 				}
 			}
 		});
@@ -459,19 +459,20 @@ public class Main_PL implements Runnable{
 	}
 	
 	public String readDirectory() {
+		explorador = new JFileChooser(systray.getPath());
 		explorador.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int seleccion = explorador.showDialog(null, "Abrir!");
 		String ruta="";
 		switch(seleccion) {
 		case JFileChooser.APPROVE_OPTION:
 			archivo = explorador.getSelectedFile();
-			ruta = archivo.getPath();
+			systray.setPath(archivo.getPath());
 		 //seleccionó abrir
 		 break;
 
 		default: return null;
 		}
-		return ruta;
+		return systray.getPath();
 	}
 	
 	public String readfile() {

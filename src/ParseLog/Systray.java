@@ -76,6 +76,11 @@ public class Systray {
         listeners();
 	}
 	
+	public void setPath(String path) {
+		this.path = path;
+		OpcPath.setState(true);
+	}
+
 	public String getPath() {
 		return path+pathName;
 	}
