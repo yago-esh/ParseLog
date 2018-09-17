@@ -317,7 +317,12 @@ public class Main_PL implements Runnable{
 		
 		SimpleModeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				SimpleModeOn();
+				if(SimpleMode) {
+					SimpleModeOff();
+				}
+				else {
+					SimpleModeOn();
+				}
 			}
 		});
 		
@@ -360,6 +365,11 @@ public class Main_PL implements Runnable{
 			e1.printStackTrace();
 		}
 		System.out.println(myIP);
+	}
+	
+	public void SimpleModeOff() {
+		SimpleMode=false;
+		SimpleModeBtn.setForeground(Color.DARK_GRAY);
 	}
 	
 	public void readLog() throws IOException{
