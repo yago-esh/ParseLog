@@ -210,6 +210,13 @@ public class Systray {
 	      } catch (IOException e) {
 			e.printStackTrace();
 		}finally{
+			
+			if (path==null){
+				path = ("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop");
+			}
+			if(pathName == null) {
+				pathName = ("\\ParseLog.txt");
+			}
 	         try{                    
 	            if( null != fr ){   
 	               fr.close();     
