@@ -1,9 +1,11 @@
 package ParseLog;
 
-import javax.swing.JFrame;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -18,17 +20,17 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JCheckBox;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.Color;
-import javax.swing.ImageIcon;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Main_PL implements Runnable{
 
@@ -54,7 +56,10 @@ public class Main_PL implements Runnable{
 	private ArrayList<String> TrazaCodeAll;
 	private ArrayList<String> FirstLine;
 	private JButton CreatedBy;
+	private Choice choice;
+	private JButton clearBtn;
 	private static Systray systray;
+	private Utils utils;
 
 	public static void main(String[] args) {
 		
@@ -67,7 +72,7 @@ public class Main_PL implements Runnable{
 		//------------------------------------Frame------------------------------------------//
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Img/Parse_log.png")));
-		frame.setBounds(700, 350, 550, 298);
+		frame.setBounds(700, 350, 550, 324);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
@@ -106,8 +111,9 @@ public class Main_PL implements Runnable{
 		panel_1.add(lblExcluir);
 		
 		JLabel Version = new JLabel("Versi\u00F3n 1.3.3");
+		Version.setForeground(Color.BLACK);
 		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
-		Version.setBounds(10, 240, 110, 16);
+		Version.setBounds(10, 260, 110, 16);
 		frame.getContentPane().add(Version);
 		
 		
@@ -143,7 +149,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnOpenFile);
 		
 		btnExecuteFilter = new JButton("Ejecutar Filtro");
-		btnExecuteFilter.setBounds(72, 212, 167, 25);
+		btnExecuteFilter.setBounds(282, 224, 115, 25);
 		frame.getContentPane().add(btnExecuteFilter);
 		
 		btnSaveIn = new JButton("Guardar en...");
@@ -151,7 +157,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnSaveIn);
 		
 		btnStopFilter = new JButton("Parar Filtro");
-		btnStopFilter.setBounds(304, 212, 167, 23);
+		btnStopFilter.setBounds(409, 224, 115, 25);
 		frame.getContentPane().add(btnStopFilter);
 		
 		SimpleModeBtn = new JButton("Modo Simplificado");
@@ -163,9 +169,14 @@ public class Main_PL implements Runnable{
 		CreatedBy.setOpaque(false);
 		CreatedBy.setIcon(new ImageIcon(Main_PL.class.getResource("/javax/swing/plaf/metal/icons/ocean/info.png")));
 		CreatedBy.setBackground(Color.LIGHT_GRAY);
-		CreatedBy.setBounds(490, 224, 32, 32);
+		CreatedBy.setBounds(492, 255, 32, 32);
 		CreatedBy.setMargin(new Insets(0, 0, 0, 0));
 		frame.getContentPane().add(CreatedBy);
+		
+		clearBtn  = new JButton("Limpiar");
+		clearBtn.setFont(new Font("Tahoma", Font.BOLD, 8));
+		clearBtn.setBounds(197, 260, 70, 15);
+		frame.getContentPane().add(clearBtn);
 		
 		
 		//------------------------------------CheckBoxes------------------------------------------//
@@ -219,11 +230,21 @@ public class Main_PL implements Runnable{
 		CB_js.setOpaque(false);
 		panel_CBs.add(CB_js);
 		
+		choice = new Choice();
+		choice.setBounds(25, 229, 240, 20);
+		frame.getContentPane().add(choice);
+		
+		JLabel lblSeleccionarLlamada = new JLabel("Seleccionar llamada:");
+		lblSeleccionarLlamada.setForeground(Color.BLACK);
+		lblSeleccionarLlamada.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblSeleccionarLlamada.setBounds(25, 209, 212, 14);
+		frame.getContentPane().add(lblSeleccionarLlamada);
+		
 		//-----------------------------------------Background--------------------------------------//
 		
 		JLabel background = new JLabel("New label");
 		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
-		background.setBounds(0, 0, 534, 264);
+		background.setBounds(0, 0, 534, 339);
 		frame.getContentPane().add(background);
 		
 		//------------------------------------Initialize Variables--------------------------------//
@@ -243,6 +264,7 @@ public class Main_PL implements Runnable{
 
 	private void initialize() {
 		
+		utils = new Utils();
 		systray = new Systray(this);
 		systray.loadFiles();
 		save_text.setText(systray.getPath());
@@ -256,6 +278,8 @@ public class Main_PL implements Runnable{
 		FirstLine = new ArrayList<String>();
 		myIP = "";
 		SimpleMode=false;
+		choice.add("Todas");
+		chargeChoice();
 		
 		//------------------------------------File Chosser--------------------------------//
 		
@@ -290,7 +314,7 @@ public class Main_PL implements Runnable{
 		btnExecuteFilter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					btnExecuteFilter.setEnabled(false);
-					btnExecuteFilter.setText("Filtro ejecutandose...");
+					btnExecuteFilter.setText("Ejecutando...");
 					setFilter();
 					start_filter=true;
 					thread_filter = new Thread(window);
@@ -331,6 +355,13 @@ public class Main_PL implements Runnable{
 				JOptionPane.showMessageDialog(null,"Created by: Yago Echave-Sustaeta Hernán");
 			}
 		});
+		
+		clearBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {	
+				choice.removeAll();
+				choice.add("Todas");
+			}
+		});
 	}
 	
 	public String FindMostRecentLog() {
@@ -341,6 +372,8 @@ public class Main_PL implements Runnable{
 		return "\\\\10.0.1.95\\gvp_logs\\GVP_MCP\\" + listOfFiles[listOfFiles.length-1].getName();
 
 	}
+	
+	
 	
 	public void SimpleModeOn() {
 		SimpleModeBtn.setForeground(Color.RED);
@@ -372,6 +405,27 @@ public class Main_PL implements Runnable{
 		SimpleModeBtn.setForeground(Color.DARK_GRAY);
 	}
 	
+	public void chargeChoice(){
+		try {
+        archivo = new File(open_text.getText());
+		FileReader fr = new FileReader (archivo);
+		br = new BufferedReader(fr);
+		String linea;
+			while((linea=br.readLine()) != null){
+				if(linea.indexOf("incall_initiated")!=-1) {
+					String[] parts = linea.split(" ");
+					String string = parts[0]+" // "+parts[3];
+					if(!utils.isInList(choice, string)){
+						choice.add(string);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void readLog() throws IOException{
 		int x=0;
 		boolean escrito=false,ignore=true;
@@ -396,6 +450,7 @@ public class Main_PL implements Runnable{
 									ignore=(linea.indexOf(myIP)==-1);
 									if(!ignore) {
 										TrazaCode.add(parts[3]);
+										choice.add(parts[0]+" // "+parts[3]);
 										pw.println(PrintFirstLine(parts[3]));
 										if(readFilter(linea)){
 											pw.println(linea);
@@ -412,8 +467,14 @@ public class Main_PL implements Runnable{
 							}		
 						}
 						else if(readFilter(linea)) {
-							x++;
-							System.out.println("Vamos por "+ x);
+							if(linea.indexOf("incall_initiated")!=-1) {
+								String[] parts = linea.split(" ");
+								String string = parts[0]+" // "+parts[3];
+								if(!utils.isInList(choice, string)){
+									choice.add(string);
+								}
+								
+							}
 							System.out.println(linea);
 							pw.println(linea);
 							escrito=true;
@@ -579,6 +640,11 @@ public class Main_PL implements Runnable{
 			for(String filt: excludes){
 				exclude_list.add(filt);
 			}
+		}
+		
+		if(!choice.getSelectedItem().equals("Todas")) {
+			String[] parts = choice.getSelectedItem().split(" // ");
+			filter_list.add(parts[1]);
 		}
 	}
 	
