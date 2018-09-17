@@ -5,6 +5,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -52,12 +54,12 @@ public class Main_PL implements Runnable{
 	private ArrayList<String> TrazaCodeAll;
 	private ArrayList<String> FirstLine;
 	private JButton CreatedBy;
+	private static Systray systray;
 
 	public static void main(String[] args) {
 		
 		window = new Main_PL();
 		window.frame.setVisible(true);
-		
 	}
 
 	public Main_PL() {
@@ -66,7 +68,7 @@ public class Main_PL implements Runnable{
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Img/Parse_log.png")));
 		frame.setBounds(700, 350, 550, 298);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
 		
@@ -124,7 +126,6 @@ public class Main_PL implements Runnable{
 		open_text.setColumns(10);
 		
 		save_text = new JTextField();
-		save_text.setText("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop\\ParseLog.txt");
 		save_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		save_text.setColumns(10);
 		save_text.setBounds(144, 82, 380, 25);
@@ -230,8 +231,21 @@ public class Main_PL implements Runnable{
 		listeners();
 	}
 
+	
+	
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void setSave_text(String save_text) {
+		this.save_text.setText(save_text);
+	}
+
 	private void initialize() {
 		
+		systray = new Systray(this);
+		systray.loadFiles();
+		save_text.setText(systray.getPath());
 		TrazaCode = new ArrayList<String>();
 		TrazaCodeAll = new ArrayList<String>();
 		file_name="new_file";
@@ -252,6 +266,17 @@ public class Main_PL implements Runnable{
 	}
 
 	private void listeners() {
+		
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				if(systray.getOpcMinimize()) {
+					frame.setVisible(false);
+				}
+				else {
+					exit();
+				}
+			}
+		});
 		
 		btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -544,6 +569,11 @@ public class Main_PL implements Runnable{
 				exclude_list.add(filt);
 			}
 		}
+	}
+	
+	public void exit() {
+		systray.saveOptions();
+		System.exit(0);
 	}
 	
 	public void run() {
