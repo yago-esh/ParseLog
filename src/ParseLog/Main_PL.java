@@ -435,7 +435,6 @@ public class Main_PL implements Runnable{
 	}
 	
 	public void readLog() throws IOException{
-		int x=0;
 		boolean escrito=false,ignore=true;
 		if(ruta != "null") {
 			fichero = new FileWriter(save_text.getText());
@@ -565,7 +564,6 @@ public class Main_PL implements Runnable{
 		explorador = new JFileChooser(systray.getPath());
 		explorador.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int seleccion = explorador.showDialog(null, "Abrir!");
-		String ruta="";
 		switch(seleccion) {
 		case JFileChooser.APPROVE_OPTION:
 			archivo = explorador.getSelectedFile();
