@@ -414,9 +414,17 @@ public class Main_PL implements Runnable{
 			while((linea=br.readLine()) != null){
 				if(linea.indexOf("incall_initiated")!=-1) {
 					String[] parts = linea.split(" ");
-					String string = parts[0]+" // "+parts[3];
-					if(!utils.isInList(choice, string)){
+					String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
+					if(!utils.isInList(choice, parts[3])){
 						choice.add(string);
+					}
+				}
+				if(linea.indexOf("Environment|vdf-")!=-1) {
+					String[] parts = linea.split(" ");
+					if(utils.isInList(choice, parts[3])){
+						utils.removeChoice(choice, parts[3]);
+						String[] parts2 = linea.split("Environment\\|");
+						choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
 					}
 				}
 			}
@@ -450,7 +458,20 @@ public class Main_PL implements Runnable{
 									ignore=(linea.indexOf(myIP)==-1);
 									if(!ignore) {
 										TrazaCode.add(parts[3]);
-										choice.add(parts[0]+" // "+parts[3]);
+										//choice.add(parts[0]+" // "+parts[3]);
+										String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
+										if(!utils.isInList(choice, parts[3])){
+											choice.add(string);
+										}
+										if(linea.indexOf("Environment|vdf-")!=-1) {
+											if(utils.isInList(choice, parts[3])){
+												utils.removeChoice(choice, parts[3]);
+												System.out.println(linea);
+												String[] parts2 = linea.split("Environment\\|");
+												System.out.println("parte 1: "+parts2[0]+" .... Parte 2: "+parts2[1]);
+												choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
+											}
+										}
 										pw.println(PrintFirstLine(parts[3]));
 										if(readFilter(linea)){
 											pw.println(linea);
@@ -461,6 +482,19 @@ public class Main_PL implements Runnable{
 							}
 							else if (lookForTrazaCode(parts[3])){
 								if(readFilter(linea)){
+									String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
+									if(!utils.isInList(choice, parts[3])){
+										choice.add(string);
+									}
+									if(linea.indexOf("Environment|vdf-")!=-1) {
+										if(utils.isInList(choice, parts[3])){
+											utils.removeChoice(choice, parts[3]);
+											System.out.println(linea);
+											String[] parts2 = linea.split("Environment\\|");
+											System.out.println("parte 1: "+parts2[0]+" .... Parte 2: "+parts2[1]);
+											choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
+										}
+									}
 									pw.println(linea);
 								}
 								escrito=true;
@@ -469,11 +503,21 @@ public class Main_PL implements Runnable{
 						else if(readFilter(linea)) {
 							if(linea.indexOf("incall_initiated")!=-1) {
 								String[] parts = linea.split(" ");
-								String string = parts[0]+" // "+parts[3];
-								if(!utils.isInList(choice, string)){
+								//String string = parts[0]+" // "+parts[3];
+								String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
+								if(!utils.isInList(choice, parts[3])){
 									choice.add(string);
 								}
-								
+							}
+							if(linea.indexOf("Environment|vdf-")!=-1) {
+								String[] parts = linea.split(" ");
+								if(utils.isInList(choice, parts[3])){
+									utils.removeChoice(choice, parts[3]);
+									System.out.println(linea);
+									String[] parts2 = linea.split("Environment\\|");
+									System.out.println("parte 1: "+parts2[0]+" .... Parte 2: "+parts2[1]);
+									choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
+								}
 							}
 							System.out.println(linea);
 							pw.println(linea);
