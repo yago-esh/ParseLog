@@ -440,7 +440,6 @@ public class Main_PL implements Runnable{
 		br = new BufferedReader(fr);
 		String linea;
 			while((linea=br.readLine()) != null){
-				System.out.println(linea);
 				checkChoice(linea);
 			}
 		} catch (IOException e) {
@@ -464,7 +463,7 @@ public class Main_PL implements Runnable{
 			String linea;
 			while(start_filter) {
 				if((linea=br.readLine()) != null){
-					if(linea.indexOf("Int")!=-1 || linea.indexOf("Std")!=-1) {
+					if(linea.indexOf("Int")!=-1) {
 						if(SimpleMode) {
 							readLogSimpleMode(linea);
 						}
@@ -495,6 +494,7 @@ public class Main_PL implements Runnable{
 			else {
 				TrazaCodeAll.add(parts[3]);
 				ignore=(linea.indexOf(myIP)==-1);
+				System.out.println("Ignore: "+ignore+" || "+linea);
 				if(!ignore) {
 					TrazaCode.add(parts[3]);
 					pw.println(PrintFirstLine(parts[3]));
@@ -517,7 +517,6 @@ public class Main_PL implements Runnable{
 	public void readLogBody(String linea) {
 		
 		checkChoice(linea);
-		System.out.println(linea);
 		pw.println(linea);
 		escrito=true;
 	}
