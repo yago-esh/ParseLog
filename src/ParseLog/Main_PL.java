@@ -328,6 +328,7 @@ public class Main_PL implements Runnable{
 				panel_2.setVisible(true);
 				btnExecuteFilter.setEnabled(false);
 				btnStopFilter.setEnabled(false);
+				cleanChoicelist();
 				new Thread() {
 		            public void run() {
 		            	chargeChoice();
@@ -383,10 +384,14 @@ public class Main_PL implements Runnable{
 		
 		clearBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
-				choice.removeAll();
-				choice.add("Todas");
+				cleanChoicelist();
 			}
 		});
+	}
+	
+	public void cleanChoicelist() {
+		choice.removeAll();
+		choice.add("Todas");
 	}
 	
 	public String FindMostRecentLog() {
@@ -529,10 +534,11 @@ public class Main_PL implements Runnable{
 		if(linea.indexOf("Environment|vdf-")!=-1) {
 			String[] parts = linea.split(" ");
 			if(utils.isInList(choice, parts[3])){
-				utils.removeChoice(choice, parts[3]);
-				String[] parts2 = linea.split("Environment\\|");
-				String[] splitName = parts2[1].split("\\-");
-				choice.add(parts[0].substring(0, 8)+" // "+ splitName[1]+" // "+parts[3]);
+				if(utils.removeChoice(choice, parts[3])) {
+					String[] parts2 = linea.split("Environment\\|");
+					String[] splitName = parts2[1].split("\\-");
+					choice.add(parts[0].substring(0, 8)+" // "+ splitName[1]+" // "+parts[3]);
+				}
 			}
 		}
 		
@@ -687,7 +693,7 @@ public class Main_PL implements Runnable{
 		
 		if(!choice.getSelectedItem().equals("Todas")) {
 			String[] parts = choice.getSelectedItem().split(" // ");
-			filter_list.add(parts[1]);
+			filter_list.add(parts[2]);
 		}
 	}
 	

@@ -14,14 +14,18 @@ public class Utils {
 		return false;
 	}
 	
-	public void removeChoice(Choice choice, String string) {
+	public boolean removeChoice(Choice choice, String string) {
 		
 		for(int x=0; x<choice.getItemCount(); x++) {
 			if(choice.getItem(x).indexOf(string)!=-1){
-				choice.remove(x);
-				break;
+				if(choice.getItem(x).indexOf("unknow")!=-1) {
+					choice.remove(x);
+					return true;
+				}
+				return false;
 			}
 		}
+		return false;
 	}
 	
 }
