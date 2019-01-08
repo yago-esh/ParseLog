@@ -51,7 +51,7 @@ public class Main_PL implements Runnable{
     private BufferedReader br;
 	private JButton SimpleModeBtn;
 	private String myIP;
-	private boolean SimpleMode;
+	private boolean SimpleMode, escrito, ignore;
 	private ArrayList<String> TrazaCode;
 	private ArrayList<String> TrazaCodeAll;
 	private ArrayList<String> FirstLine;
@@ -60,6 +60,8 @@ public class Main_PL implements Runnable{
 	private JButton clearBtn;
 	private static Systray systray;
 	private Utils utils;
+	private JPanel panel_2;
+	
 
 	public static void main(String[] args) {
 		
@@ -70,31 +72,46 @@ public class Main_PL implements Runnable{
 	public Main_PL() {
 		
 		//------------------------------------Frame------------------------------------------//
+		
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Img/Parse_log.png")));
-		frame.setBounds(700, 350, 550, 324);
+		frame.setBounds(700, 350, 590, 324);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("ParseLog");
 		
+		
+		
 		//------------------------------------Panels------------------------------------------//
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(25, 116, 499, 25);
+		panel.setBounds(25, 116, 539, 25);
 		panel.setOpaque(false);
 		panel.setLayout(null);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBounds(25, 178, 499, 25);
+		panel_1.setBounds(25, 178, 539, 25);
 		panel_1.setOpaque(false);
 		frame.getContentPane().add(panel_1);
 		
+		panel_2 = new JPanel();
+		panel_2.setBounds(316, 216, 248, 33);
+		frame.getContentPane().add(panel_2);
+		panel_2.setLayout(null);
+		panel_2.setVisible(false);
+		
+		JLabel lblCargando = new JLabel("Cargando...");
+		lblCargando.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 19));
+		lblCargando.setBounds(61, 0, 147, 33);
+		panel_2.add(lblCargando);
+		
 		panel_CBs = new JPanel();
-		panel_CBs.setBounds(10, 144, 514, 33);
+		panel_CBs.setBounds(25, 144, 539, 33);
 		panel_CBs.setOpaque(false);
 		frame.getContentPane().add(panel_CBs);
+		
 		
 		//------------------------------------Labels------------------------------------------//
 		
@@ -120,26 +137,26 @@ public class Main_PL implements Runnable{
 		//------------------------------------TextFields---------------------------------------//
 		
 		filter_txt = new JTextField();
-		filter_txt.setBounds(46, 0, 453, 22);
+		filter_txt.setBounds(46, 0, 493, 22);
 		filter_txt.setColumns(10);
 		panel.add(filter_txt);
 		
 		open_text = new JTextField();
 		open_text.setText(FindMostRecentLog());
 		open_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		open_text.setBounds(144, 46, 380, 25);
+		open_text.setBounds(144, 46, 420, 25);
 		frame.getContentPane().add(open_text);
 		open_text.setColumns(10);
 		
 		save_text = new JTextField();
 		save_text.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		save_text.setColumns(10);
-		save_text.setBounds(144, 82, 380, 25);
+		save_text.setBounds(144, 82, 420, 25);
 		frame.getContentPane().add(save_text);
 		
 		Exclude_txt = new JTextField();
 		Exclude_txt.setColumns(10);
-		Exclude_txt.setBounds(64, 0, 435, 22);
+		Exclude_txt.setBounds(64, 0, 475, 22);
 		panel_1.add(Exclude_txt);
 		
 		//------------------------------------Buttons------------------------------------------//
@@ -149,7 +166,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnOpenFile);
 		
 		btnExecuteFilter = new JButton("Ejecutar Filtro");
-		btnExecuteFilter.setBounds(282, 224, 115, 25);
+		btnExecuteFilter.setBounds(322, 224, 115, 25);
 		frame.getContentPane().add(btnExecuteFilter);
 		
 		btnSaveIn = new JButton("Guardar en...");
@@ -157,7 +174,7 @@ public class Main_PL implements Runnable{
 		frame.getContentPane().add(btnSaveIn);
 		
 		btnStopFilter = new JButton("Parar Filtro");
-		btnStopFilter.setBounds(409, 224, 115, 25);
+		btnStopFilter.setBounds(449, 224, 115, 25);
 		frame.getContentPane().add(btnStopFilter);
 		
 		SimpleModeBtn = new JButton("Modo Simplificado");
@@ -169,13 +186,13 @@ public class Main_PL implements Runnable{
 		CreatedBy.setOpaque(false);
 		CreatedBy.setIcon(new ImageIcon(Main_PL.class.getResource("/javax/swing/plaf/metal/icons/ocean/info.png")));
 		CreatedBy.setBackground(Color.LIGHT_GRAY);
-		CreatedBy.setBounds(492, 255, 32, 32);
+		CreatedBy.setBounds(532, 253, 32, 32);
 		CreatedBy.setMargin(new Insets(0, 0, 0, 0));
 		frame.getContentPane().add(CreatedBy);
 		
 		clearBtn  = new JButton("Limpiar");
 		clearBtn.setFont(new Font("Tahoma", Font.BOLD, 8));
-		clearBtn.setBounds(197, 260, 70, 15);
+		clearBtn.setBounds(240, 255, 70, 15);
 		frame.getContentPane().add(clearBtn);
 		
 		
@@ -231,7 +248,7 @@ public class Main_PL implements Runnable{
 		panel_CBs.add(CB_js);
 		
 		choice = new Choice();
-		choice.setBounds(25, 229, 240, 20);
+		choice.setBounds(25, 229, 285, 20);
 		frame.getContentPane().add(choice);
 		
 		JLabel lblSeleccionarLlamada = new JLabel("Seleccionar llamada:");
@@ -244,7 +261,7 @@ public class Main_PL implements Runnable{
 		
 		JLabel background = new JLabel("New label");
 		background.setIcon(new ImageIcon(Main_PL.class.getResource("/Img/background.jpg")));
-		background.setBounds(0, 0, 534, 339);
+		background.setBounds(0, 0, 574, 339);
 		frame.getContentPane().add(background);
 		
 		//------------------------------------Initialize Variables--------------------------------//
@@ -308,6 +325,14 @@ public class Main_PL implements Runnable{
 				if(path!=null) {
 					open_text.setText(path);
 				}
+				panel_2.setVisible(true);
+				btnExecuteFilter.setEnabled(false);
+				btnStopFilter.setEnabled(false);
+				new Thread() {
+		            public void run() {
+		            	chargeChoice();
+		            }
+		        }.start();
 			}
 		});
 		
@@ -373,8 +398,6 @@ public class Main_PL implements Runnable{
 
 	}
 	
-	
-	
 	public void SimpleModeOn() {
 		SimpleModeBtn.setForeground(Color.RED);
 		SimpleMode=true;
@@ -412,30 +435,21 @@ public class Main_PL implements Runnable{
 		br = new BufferedReader(fr);
 		String linea;
 			while((linea=br.readLine()) != null){
-				if(linea.indexOf("incall_initiated")!=-1) {
-					String[] parts = linea.split(" ");
-					String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
-					if(!utils.isInList(choice, parts[3])){
-						choice.add(string);
-					}
-				}
-				if(linea.indexOf("Environment|vdf-")!=-1) {
-					String[] parts = linea.split(" ");
-					if(utils.isInList(choice, parts[3])){
-						utils.removeChoice(choice, parts[3]);
-						String[] parts2 = linea.split("Environment\\|");
-						choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
-					}
-				}
+				System.out.println(linea);
+				checkChoice(linea);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		panel_2.setVisible(false);
+		btnExecuteFilter.setEnabled(true);
+		btnStopFilter.setEnabled(true);
 	}
 	
 	public void readLog() throws IOException{
-		boolean escrito=false,ignore=true;
+		escrito=false;
+		ignore=true;
 		if(ruta != "null") {
 			fichero = new FileWriter(save_text.getText());
             pw = new PrintWriter(fichero);
@@ -447,68 +461,10 @@ public class Main_PL implements Runnable{
 				if((linea=br.readLine()) != null){
 					if(linea.indexOf("Int")!=-1 || linea.indexOf("Std")!=-1) {
 						if(SimpleMode) {
-							String[] parts = linea.split(" ");
-							if(!lookForTrazaCodeAll(parts[3])) {
-								if(linea.indexOf("incall_initiated")!=-1) {
-									FirstLine.add(linea);
-								}
-								else {
-									TrazaCodeAll.add(parts[3]);
-									ignore=(linea.indexOf(myIP)==-1);
-									if(!ignore) {
-										TrazaCode.add(parts[3]);
-										pw.println(PrintFirstLine(parts[3]));
-										if(readFilter(linea)){
-											pw.println(linea);
-										}
-									}
-									escrito=true;
-								}
-							}
-							else if (lookForTrazaCode(parts[3])){
-								if(readFilter(linea)){
-									if(linea.indexOf("incall_initiated")==-1) {
-										String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
-										if(!utils.isInList(choice, parts[3])){
-											choice.add(string);
-										}
-										if(linea.indexOf("Environment|vdf-")!=-1) {
-											if(utils.isInList(choice, parts[3])){
-												utils.removeChoice(choice, parts[3]);
-												System.out.println(linea);
-												String[] parts2 = linea.split("Environment\\|");
-												System.out.println("parte 1: "+parts2[0]+" .... Parte 2: "+parts2[1]);
-												choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
-											}
-										}
-									}
-									pw.println(linea);
-								}
-								escrito=true;
-							}		
+							readLogSimpleMode(linea);
 						}
 						else if(readFilter(linea)) {
-							if(linea.indexOf("incall_initiated")!=-1) {
-								String[] parts = linea.split(" ");
-								//String string = parts[0]+" // "+parts[3];
-								String string = parts[0] + " // " + "unknow"+ " // " + parts[3];
-								if(!utils.isInList(choice, parts[3])){
-									choice.add(string);
-								}
-							}
-							if(linea.indexOf("Environment|vdf-")!=-1) {
-								String[] parts = linea.split(" ");
-								if(utils.isInList(choice, parts[3])){
-									utils.removeChoice(choice, parts[3]);
-									System.out.println(linea);
-									String[] parts2 = linea.split("Environment\\|");
-									System.out.println("parte 1: "+parts2[0]+" .... Parte 2: "+parts2[1]);
-									choice.add(parts[0]+" // "+ parts2[1]+" // "+parts[3]);
-								}
-							}
-							System.out.println(linea);
-							pw.println(linea);
-							escrito=true;
+							readLogBody(linea);
 						}
 					}
 				}
@@ -523,6 +479,63 @@ public class Main_PL implements Runnable{
 				}
 			}
 		}
+	}
+
+	public void readLogSimpleMode(String linea){
+		String[] parts = linea.split(" ");
+		if(!lookForTrazaCodeAll(parts[3])) {
+			if(linea.indexOf("incall_initiated")!=-1) {
+				FirstLine.add(linea);
+			}
+			else {
+				TrazaCodeAll.add(parts[3]);
+				ignore=(linea.indexOf(myIP)==-1);
+				if(!ignore) {
+					TrazaCode.add(parts[3]);
+					pw.println(PrintFirstLine(parts[3]));
+					if(readFilter(linea)){
+						pw.println(linea);
+					}
+				}
+				escrito=true;
+			}
+		}
+		else if (lookForTrazaCode(parts[3])){
+			if(readFilter(linea)){
+				checkChoice(linea);
+				pw.println(linea);
+			}
+			escrito=true;
+		}
+	}
+	
+	public void readLogBody(String linea) {
+		
+		checkChoice(linea);
+		System.out.println(linea);
+		pw.println(linea);
+		escrito=true;
+	}
+	
+	public void checkChoice(String linea) {
+		
+		if(linea.indexOf("incall_initiated")!=-1) {
+			String[] parts = linea.split(" ");
+			String string = parts[0].substring(0, 8) + " // " + "unknow"+ " // " + parts[3];
+			if(!utils.isInList(choice, parts[3])){
+				choice.add(string);
+			}
+		}
+		if(linea.indexOf("Environment|vdf-")!=-1) {
+			String[] parts = linea.split(" ");
+			if(utils.isInList(choice, parts[3])){
+				utils.removeChoice(choice, parts[3]);
+				String[] parts2 = linea.split("Environment\\|");
+				String[] splitName = parts2[1].split("\\-");
+				choice.add(parts[0].substring(0, 8)+" // "+ splitName[1]+" // "+parts[3]);
+			}
+		}
+		
 	}
 	
 	public String PrintFirstLine(String code) {
