@@ -525,7 +525,7 @@ public class Main_PL implements Runnable{
 		
 		if(linea.indexOf("incall_initiated")!=-1) {
 			String[] parts = linea.split(" ");
-			String string = parts[0].substring(0, 8) + " // " + "unknow"+ " // " + parts[3];
+			String string = parts[0].substring(0, 8) + " // " + "unknown"+ " // " + parts[3];
 			if(!utils.isInList(choice, parts[3])){
 				choice.add(string);
 			}
