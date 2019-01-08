@@ -127,7 +127,7 @@ public class Main_PL implements Runnable{
 		lblExcluir.setBounds(10, 3, 44, 16);
 		panel_1.add(lblExcluir);
 		
-		JLabel Version = new JLabel("Versi\u00F3n 1.3.3");
+		JLabel Version = new JLabel("Versi\u00F3n 1.4.3");
 		Version.setForeground(Color.BLACK);
 		Version.setFont(new Font("Tahoma", Font.BOLD, 13));
 		Version.setBounds(10, 260, 110, 16);
