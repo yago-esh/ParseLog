@@ -480,6 +480,11 @@ public class Main_PL implements Runnable{
 					fichero = new FileWriter(save_text.getText(),true);
 					pw = new PrintWriter(fichero);
 					}
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
